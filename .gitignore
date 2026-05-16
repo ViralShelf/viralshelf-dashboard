@@ -1,0 +1,50 @@
+# ── Secrets & API Keys ──
+.env
+.api-keys.json
+.etsy-tokens.json
+.etsy-monitor-baseline.json
+.airtable-config.json
+.daily-costs.json
+.competitor-scan.json
+.last-listing-id.txt
+
+# ── Dependencies ──
+node_modules/
+
+# ── Database & Temp Data ──
+*.sqlite
+*.sqlite3
+data/
+logs/
+claude-dashboard-temp/data/
+claude-dashboard-temp/logs/
+
+# ── OS Files ──
+.DS_Store
+Thumbs.db
+
+# ── Build Artifacts ──
+dist/
+build/
+
+# ── IDE ──
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Other Workspace Stuff (not dashboard) ──
+memory/
+dealfinder/
+template-business/
+generated-svgs/
+listing-templates/
+scripts/
+_headers
+vitalshelf-*.html
+etsy-listing-*.json
+digital-products-market-research.md
+viralshelf-privacy.html
+viralshelf-expansion-research.md
+package.json
+package-lock.json

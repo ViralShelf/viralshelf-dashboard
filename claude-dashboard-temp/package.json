@@ -1,0 +1,26 @@
+{
+  "name": "viralshelf-server",
+  "version": "2.0.0",
+  "description": "ViralShelf local dashboard server — Etsy SVG production base",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start":            "node server.js",
+    "dev":              "node --watch server.js",
+    "install-service":  "node service/install.js",
+    "remove-service":   "node service/uninstall.js",
+    "setup-telegram":   "node scripts/setup-telegram.js"
+  },
+  "dependencies": {
+    "sql.js": "^1.10.0",
+    "dotenv":         "^16.4.5",
+    "express":        "^4.19.2",
+    "ws":             "^8.17.0"
+  },
+  "devDependencies": {
+    "node-windows": "^1.0.0-beta.8"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
