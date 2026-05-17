@@ -249,8 +249,12 @@ setInterval(async () => {
 // Helper to build Etsy headers with fresh token
 async function etsyHeaders() {
   const token = await getEtsyToken();
+  const ks = (process.env.ETSY_KEYSTRING || '').trim();
+  const ss = (process.env.ETSY_CLIENT_SECRET || '').trim();
+  // Etsy API v3 requires keystring:shared_secret format
+  const apiKey = ks && ss ? `${ks}:${ss}` : ks;
   return {
-    'x-api-key':   process.env.ETSY_KEYSTRING || '',
+    'x-api-key':   apiKey,
     Authorization: token ? `Bearer ${token}` : '',
   };
 }
@@ -269,7 +273,7 @@ app.get('/auth/etsy/callback', async (req, res) => {
       body: new URLSearchParams({
         grant_type:           'authorization_code',
         client_id:            process.env.ETSY_CLIENT_ID || '',
-        redirect_uri:         `http://127.0.0.1:${process.env.PORT||4317}/auth/etsy/callback`,
+        redirect_uri:         `http://localhost:${process.env.PORT||4317}/auth/etsy/callback`,
         code,
         code_verifier:        verifier || '',
       }),
@@ -301,7 +305,7 @@ app.get('/auth/etsy/start', (req, res) => {
   S.memUpsert.run('etsy_oauth_state',   'system', state,    Date.now());
 
   const scopes = 'transactions_r listings_r listings_w';
-  const redirect = `http://127.0.0.1:${process.env.PORT||4317}/auth/etsy/callback`;
+  const redirect = `http://localhost:${process.env.PORT||4317}/auth/etsy/callback`;
   const url = `https://www.etsy.com/oauth/connect?response_type=code&redirect_uri=${encodeURIComponent(redirect)}&scope=${encodeURIComponent(scopes)}&client_id=${clientId}&state=${state}&code_challenge=${challenge}&code_challenge_method=S256`;
 
   res.redirect(url);

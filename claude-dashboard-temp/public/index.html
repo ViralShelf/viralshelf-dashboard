@@ -337,6 +337,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--dark
       <button class="bbtn" onclick="camRoom('social',this)">SOCIAL VAULT</button>
       <div class="bsep"></div>
       <button class="bbtn wr" onclick="openWarRoom()">⚡ WAR ROOM</button>
+      <div class="bsep"></div>
+      <button class="bbtn" onclick="location.href='cockpit.html'">🕹️ COCKPIT</button>
     </div>
   </div>
 </div>
@@ -417,16 +419,16 @@ const AGENTS = {
 };
 
 // ── ROOMS ──
-const MAP_W = 42, MAP_H = 47;
+const MAP_W = 50, MAP_H = 47;
 const WW = MAP_W * T, WH = MAP_H * T;
 const ROOMS = {
-  nexus:   {x:17, y:20, w:8,  h:8,  label:'◈ CEO NEXUS',      col:'#001828', acc:'#00e5ff'},
+  nexus:   {x:21, y:18, w:8,  h:8,  label:'◈ CEO NEXUS',      col:'#001828', acc:'#00e5ff'},
   research:{x:1,  y:1,  w:18, h:12, label:'RESEARCH LAB',      col:'#003018', acc:'#4fc3f7'},
-  design:  {x:23, y:1,  w:18, h:12, label:'DESIGN STUDIO',     col:'#0d0018', acc:'#b080ff'},
+  design:  {x:31, y:1,  w:18, h:12, label:'DESIGN STUDIO',     col:'#0d0018', acc:'#b080ff'},
   seo:     {x:1,  y:16, w:18, h:12, label:'SEO BUNKER',        col:'#001508', acc:'#00e676'},
-  merchant:{x:23, y:16, w:18, h:12, label:'MERCHANT SHOP',     col:'#180e00', acc:'#ffab00'},
+  merchant:{x:31, y:16, w:18, h:12, label:'MERCHANT SHOP',     col:'#180e00', acc:'#ffab00'},
   social:  {x:1,  y:31, w:18, h:12, label:'SOCIAL VAULT',      col:'#180008', acc:'#ff4081'},
-  warroom: {x:23, y:31, w:18, h:12, label:'WAR ROOM',          col:'#080018', acc:'#7c4dff'},
+  warroom: {x:31, y:31, w:18, h:12, label:'WAR ROOM',          col:'#080018', acc:'#7c4dff'},
 };
 const FURN = {
   nexus:[{t:'throne',x:2,y:2},{t:'holo',x:5,y:2},{t:'terminal',x:2,y:6},{t:'console',x:5,y:5}],
@@ -678,7 +680,24 @@ function drawFacility() {
   fctx.strokeStyle='#0a1018'; fctx.lineWidth=0.5;
   for(let gx=0;gx<=MAP_W;gx++){fctx.beginPath();fctx.moveTo(gx*T,0);fctx.lineTo(gx*T,WH);fctx.stroke();}
   for(let gy=0;gy<=MAP_H;gy++){fctx.beginPath();fctx.moveTo(0,gy*T);fctx.lineTo(WW,gy*T);fctx.stroke();}
-  fctx.fillStyle='#060d1a'; fctx.fillRect(21*T,0,2*T,WH); fctx.fillRect(0,14*T,WW,2*T); fctx.fillRect(0,29*T,WW,2*T);
+  // Corridors — wide central walkways connecting everything
+  fctx.fillStyle='#060d1a';
+  // Vertical corridor (center column)
+  fctx.fillRect(19*T, 0, 12*T, WH);
+  // Horizontal corridors
+  fctx.fillRect(0, 13*T, WW, 3*T);
+  fctx.fillRect(0, 30*T, WW, 2*T);
+  
+  // Pathway lines along corridors
+  fctx.strokeStyle='rgba(0, 229, 255, 0.06)';
+  fctx.lineWidth = 1;
+  fctx.setLineDash([4, 8]);
+  // Vertical path centerline
+  fctx.beginPath(); fctx.moveTo(25*T, 0); fctx.lineTo(25*T, WH); fctx.stroke();
+  // Horizontal path centerline
+  fctx.beginPath(); fctx.moveTo(0, 14.5*T); fctx.lineTo(WW, 14.5*T); fctx.stroke();
+  fctx.beginPath(); fctx.moveTo(0, 31*T); fctx.lineTo(WW, 31*T); fctx.stroke();
+  fctx.setLineDash([]);
   // Rooms
   Object.entries(ROOMS).forEach(([rk,r]) => {
     const rx=r.x*T, ry=r.y*T, rw=r.w*T, rh=r.h*T;
@@ -755,6 +774,13 @@ fc.addEventListener('mousemove',e=>{
   if(found){document.getElementById('tt-name').textContent=found.name;document.getElementById('tt-role').textContent=found.role;document.getElementById('tt-task').textContent=found.task;const sc=found.status==='ACTIVE'?'#00e676':found.status==='PENDING'?'#ffab00':'#ff1744';document.getElementById('tt-status').innerHTML=`<span style="color:${sc}">● ${found.status}</span>`;tip.style.display='block';tip.style.left=(e.clientX+16)+'px';tip.style.top=(e.clientY-10)+'px';}else tip.style.display='none';
 });
 fc.addEventListener('mouseleave',()=>{document.getElementById('tooltip').style.display='none';});
+
+// Scroll wheel zoom
+fc.addEventListener('wheel', e => {
+  e.preventDefault();
+  const factor = e.deltaY > 0 ? 0.88 : 1.12;
+  cam.tz = Math.max(0.25, Math.min(5, cam.tz * factor));
+}, { passive: false });
 
 // Clock
 function updateClock(){document.getElementById('clk').textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
